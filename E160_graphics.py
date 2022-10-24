@@ -7,8 +7,8 @@ from cost_map import *
 
 #Swtich these two lines to choose planner
 
-#from path_planner import *
-from prm_planner import *
+from path_planner import *
+#from prm_planner import *
 
 class E160_graphics:
 	def __init__(self, environment):
@@ -138,8 +138,8 @@ class E160_graphics:
 		self.canvas.coords(robot.image, *robot_points)
 
 	def set_velocity_disp(self, robot):
-		self.left_speed.config(text="left wheel speed "+"%.2f" % robot.state.phi_l)
-		self.right_speed.config(text="right wheel speed "+"%.2f"% robot.state.phi_r)
+		self.left_speed.config(text="left wheel speed "+str(robot.state.phi_l))
+		self.right_speed.config(text="right wheel speed "+str(robot.state.phi_r))
 		
 		if(abs(robot.state.phi_l)>16 or abs(robot.state.phi_r)>16):
 			self.impossible+=1
@@ -205,14 +205,14 @@ class E160_graphics:
 		desired_points = self.reverse_scale_points([float(event.x), float(event.y)], self.scale)
 		robot = self.environment.robots[0]
 		robot.state_des.reset_destination(desired_points[0],desired_points[1],0)
-		print("New desired robot state", robot.state_des.x, robot.state_des.y)
+		print("New clicked robot travel target", robot.state_des.x, robot.state_des.y)
 
 
 
 	def callback_right(self, event):
 		desired_points = self.reverse_scale_points([float(event.x), float(event.y)], self.scale)
+		print("New clicked goal position", desired_points[0], desired_points[1])
 		self.path.set_goal(world_x = desired_points[0], world_y = desired_points[1], world_theta = .0)
-		print("New desired goal position", desired_points[0], desired_points[1])
 
 		self.path.plan_path()
 		self.path._show_path()

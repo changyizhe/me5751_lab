@@ -41,7 +41,7 @@ class path_planner:
 	def set_goal(self, world_x, world_y, world_theta = 0):
 		self.goal_state_map = Pose()
 		map_i, map_j = self.world2map(world_x, world_y)
-		print ("goal is %d, %d on map"%(map_i,map_j))
+		print ("our new goal is %d, %d on map"%(map_i,map_j))
 		self.goal_state_map.set_pose(map_i, map_j, world_theta)
 
 
@@ -83,33 +83,30 @@ class path_planner:
 			self.map_img_np[map_i][map_j][2] =0
 			self.map_img_np[map_i][map_j][3] =255
 
-		# np.savetxt("file.txt", self.map_img_np[1])
-
 		self.path_img=Image.frombytes('RGBA', (self.map_img_np.shape[1],self.map_img_np.shape[0]), self.map_img_np.astype('b').tostring())
-		
+		self.graphics.draw_path(self.path_img)
+
 		# If you want to save the path as an image, un-comment the following line:
 		# self.path_img.save('Log\path_img.png')
 		
 		# If you want to output an image of map and path, un-comment the following two lines
 		# self.path_img = toimage(self.map_img_np)
 		# self.path_img.show()
-		
-		self.graphics.draw_path(self.path_img)
 
 	def plan_path(self):
 
 		# The major program you are going to write!
 		# The following simply demo that how you can add pose to path
 		self.path.clear_path()
-		
+
 		points = bresenham(self.start_state_map.map_i,self.start_state_map.map_j,self.goal_state_map.map_i,self.goal_state_map.map_j)
 	
 		for p in points:
 			self.path.add_pose(Pose(map_i=p[0],map_j=p[1],theta=0)) #theta is wrong
 			
 		self.path.save_path(file_name="Log\path.csv")
-		
-		
+
+
 # bresenham algorithm for line generation on grid map
 # from http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 def bresenham(x1, y1, x2, y2):
