@@ -117,6 +117,7 @@ class cost_map:
 		value=brushMap - 2000*grid # Ensuring the starting points are negative
 		value[value < 0] = 0  # Setting the walls to zero
 		
+		# Need to add the inflation here !!!
 		
 		value[value > 255] = 255 # normalizing values to a 255 max
 		bigNum= -1
@@ -127,35 +128,22 @@ class cost_map:
 		for i in range(L):
 			for j in range (L):
 				value[i][j] = int(value[i][j])
-		
+
+
 		gravMap=np.copy(value)
-		for i in range(L): # Gravity map (1/r^2)
-			for j in range(L):
-				if gravMap[i][j] != 0:
-					gravMap[i][j] = gravMap[i][j]**(-2)
-				if gravMap[i][j] == 0:
-					gravMap[i][j] = 255
-		np.savetxt('Log/gravity_map1.csv',gravMap, delimiter=',')
-
-		gravMap2=np.copy(value)
-		for i in range(L): # Gravity map (1/r)
-			for j in range(L):
-				if gravMap2[i][j] != 0:
-					gravMap2[i][j] = gravMap2[i][j]**(-1)
-				if gravMap2[i][j] == 0:
-					gravMap2[i][j] = 255
-		np.savetxt('Log/gravity_map2.csv',gravMap2, delimiter=',')
-
-		gravMap3=np.copy(value)
 		for i in range(L): # Gravity map (abs(r-255))
 			for j in range(L):
-				if gravMap3[i][j] != 0:
-					gravMap3[i][j] = abs(gravMap3[i][j]-256)
-				if gravMap3[i][j] == 0:
-					gravMap3[i][j] = 255
-		np.savetxt('Log/gravity_map3.csv',gravMap3, delimiter=',')
+				if gravMap[i][j] != 0:
+					gravMap[i][j] = abs(gravMap[i][j]-256)
+					if gravMap[i][j] < 0:
+						gravMap[i][j] =0
+					if gravMap[i][j] > 255:
+						gravMap[i][j] = 255
+				if gravMap[i][j] == 0:
+					gravMap[i][j] = 255
+		np.savetxt('Log/gravity_map3.csv',gravMap, delimiter=',')
 		
-		self.costmap=np.copy(gravMap3) # set our costmap (value) or our various gravity definitions as the output
+		self.costmap=np.copy(gravMap) # set our costmap (value) or our various gravity definitions as the output
 
 		np.savetxt('Log/cost_map.csv',self.costmap, delimiter=',')
 		pass
