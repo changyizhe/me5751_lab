@@ -15,7 +15,7 @@ class E160_graphics:
 		self.environment = environment
 		self.tk = Tk()
 		self.tk.geometry("+300+5")
-		self.scale = 250 #This number should be the same as the map image size
+		self.scale = 250 #This number should be the same as the map image size (200)
 		self.canvas = Canvas(self.tk, width=self.environment.width*self.scale, height=self.scale* self.environment.height)
 		self.tk.title("Motion Planning")
 		self.canvas.bind("<Button-1>", self.callback_left)
