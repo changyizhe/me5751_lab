@@ -131,6 +131,7 @@ class path_planner:
 
 		###############################################################
 		#Below is an example that how you can random a point and check if it hits any obstacle from start point
+		self.path.clear_path()
 
 		ri = random.randint(0,self.map_width)
 		rj = random.randint(0,self.map_height) # Let's make a random number!
@@ -157,6 +158,11 @@ class path_planner:
 
 		#If you decide the path between start_node and random_node should be within your final path, you must do:
 		points = bresenham(self.start_node.map_i,self.start_node.map_j,random_node.map_i,random_node.map_j)
+		for p in points:
+			self.path.add_pose(Pose(map_i=p[0],map_j=p[1],theta=0))
+
+		#We add the path between the random node to the goal
+		points = bresenham(random_node.map_i,random_node.map_j,self.goal_node.map_i,self.goal_node.map_j)
 		for p in points:
 			self.path.add_pose(Pose(map_i=p[0],map_j=p[1],theta=0))
 
