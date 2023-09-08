@@ -1,7 +1,8 @@
 from E160_robot import *
 from E160_state import *
-# from E160_wall import *
-from P_controller import *
+
+from controller import *
+
 # import serial
 import time
 # from xbee import XBee
@@ -43,7 +44,7 @@ class E160_environment:
             r = E160_robot(self, '\x00\x0C', i, deltaT)
             self.robots.append(r)
 
-        self.robots[0].set_controller(P_controller(self.robots[0]))# set P_controller for controller 0
+        self.robots[0].set_controller(controller(self.robots[0]))# set P_controller for controller 0
 
 
     def update_robots(self, deltaT):

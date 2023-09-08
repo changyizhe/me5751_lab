@@ -7,8 +7,8 @@ from cost_map import *
 
 #Swtich these two lines to choose planner
 
-#from path_planner import *
-from prm_planner import *
+from path_planner import *
+# from prm_planner import *
 
 class E160_graphics:
 	def __init__(self, environment):
@@ -60,16 +60,13 @@ class E160_graphics:
 		self.arrow_points=[]
 
 		self.current_map_show = 0 #currently is showing map: 0 showing costmap: 1
+		
 		self.map = cost_map(self)
 		
 		# Un-comment the following two lines for lab 3 and lab 4
-		self.path = path_planner(self)
-		self.canvas.bind("<Button-3>", self.callback_right)
-
-		# try:
-		# 	self.map = cost_map(self) 
-		# except:
-		# 	self.show_map_button.configure(state="disabled")
+		# self.path = path_planner(self)
+		# self.canvas.bind("<Button-3>", self.callback_right)
+		
 		# draw first robot
 
 		for r in self.environment.robots:
@@ -206,7 +203,6 @@ class E160_graphics:
 		robot = self.environment.robots[0]
 		robot.state_des.reset_destination(desired_points[0],desired_points[1],0)
 		print("New clicked robot travel target", robot.state_des.x, robot.state_des.y)
-
 
 
 	def callback_right(self, event):
