@@ -91,7 +91,7 @@ class controller:
 			self.robot.log_data([c_posX,c_posY,c_theta,c_vix,c_viy,c_wi,c_v,c_w])
 
 
-		if abs(c_posX - d_posX)< 5 and (c_theta - d_theta) < 1 : #you need to modify the reach way point criteria
+		if abs(c_posX - d_posX)< 5 and abs(c_theta - d_theta) < 0.2 : #you need to modify the reach way point criteria
 			if(self.robot.state_des.reach_destination()): 
 				print("final goal reached")
 				self.robot.set_motor_control(.0, .0)  # stop the motor
