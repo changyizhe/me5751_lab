@@ -109,7 +109,7 @@ class E160_graphics:
 	def initial_draw_robot(self, robot):
 		# open image
 		robot.robot_gif = Image.open("robot.png").convert('RGBA') 
-		robot.robot_gif = robot.robot_gif.resize((robot.L_pixel,robot.L_pixel),Image.ANTIALIAS)
+		robot.robot_gif = robot.robot_gif.resize((robot.L_pixel,robot.L_pixel))
 		self.arrow_png = Image.open("arrows.png").convert('RGBA')
 		# im = cv2.imread("maps/testmap.png",cv2.IMREAD_GRAYSCALE)
 		# im.resize(self.environment.width*self.scale,self.environment.height*self.scale)
