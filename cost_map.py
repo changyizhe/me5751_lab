@@ -43,9 +43,9 @@ class cost_map:
 		print ("Loaded map dimension: %d x %d pixel"%(self.map.shape[0],self.map.shape[1]))
 		self.map = cv2.resize(self.map, dsize=(int(self.map_width),int(self.map_height)), interpolation=cv2.INTER_CUBIC)
 		
-		self.distmap=np.full_like(self.map, -1, dtype=np.int) #map for saving distance to the nearest obstacle, initialize with an array with all -1
+		self.distmap=np.full_like(self.map, -1, dtype=int) #map for saving distance to the nearest obstacle, initialize with an array with all -1
 
-		self.costmap=np.copy(self.map).astype(np.float) #the cost map you are going to work on
+		self.costmap=np.copy(self.map).astype(float) #the cost map you are going to work on
 		self.vis_map=np.copy(self.map) #map for visualization, intialize same as the map
 
 	#save your costmap into a grayscale image
