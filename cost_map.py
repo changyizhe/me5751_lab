@@ -101,4 +101,4 @@ class cost_map:
 		max_val = np.max(self.costmap)
 
 		# Normalize the costmap
-		self.vis_map = np.uint8((self.costmap - min_val) / (max_val - min_val) * 255)
+		self.vis_map = np.uint8(255 - (self.costmap - min_val) / (max_val - min_val) * 255)
