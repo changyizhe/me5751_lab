@@ -18,3 +18,7 @@ Instructor: Y. Chang
 ## CPP ME5751 Fall 2022
 2022 CPP ME 5751 Robot motion planning, simulation only
 Instructor: Y. Chang
+
+## CPP ME5751 Fall 2025
+2022 CPP ME 5751 Robot motion planning, simulation only
+Instructor: Y. Chang
