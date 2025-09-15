@@ -9,7 +9,7 @@ Instructor: C. Clark, Assistants: Z. Lobo, J. Lee
 
 ## HMC E190AR Spring 2019
 HMC E190AR Robotics with ROS, a version with ROS is available (not included in this package)
-Instructor: Y. Chang, Assistants: J. Shi, J. Lee
+Instructor: Y. Chang, Assistants: [J. Shi](https://github.com/jingnanshi), J. Lee
 
 ## CPP ME5751 Fall 2019
 2019 CPP ME 5751 Robot motion planning, simulation only
