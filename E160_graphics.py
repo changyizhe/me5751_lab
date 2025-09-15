@@ -15,7 +15,7 @@ class E160_graphics:
 		self.environment = environment
 		self.tk = Tk()
 		self.tk.geometry("+300+5")
-		self.scale = 250 #This number should be the same as the map image size
+		self.scale = 200 #This number should be the same as the half of the map dimension
 		self.canvas = Canvas(self.tk, width=self.environment.width*self.scale, height=self.scale* self.environment.height)
 		self.tk.title("Motion Planning")
 		self.canvas.bind("<Button-1>", self.callback_left)
@@ -135,11 +135,17 @@ class E160_graphics:
 		self.canvas.coords(robot.image, *robot_points)
 
 	def set_velocity_disp(self, robot):
-		self.left_speed.config(text="left wheel speed "+str(robot.state.phi_l))
-		self.right_speed.config(text="right wheel speed "+str(robot.state.phi_r))
+
+		left = "{:7.2f}".format(robot.state.phi_l)
+		right = "{:7.2f}".format(robot.state.phi_r)
+		self.left_speed.config(text="left wheel speed: "+left)
+		self.right_speed.config(text="right wheel speed: "+right)
 		
-		if(abs(robot.state.phi_l)>16 or abs(robot.state.phi_r)>16):
-			self.impossible+=1
+		if(robot.state.wrong_speed==True):
+		# if(abs(robot.state.wrong_speed)>16 or abs(robot.state.phi_r)>16):
+			self.impossible = "yes"
+		else:
+			self.impossible = " no"
 
 		self.wrong.config(text="impossible frame "+str(self.impossible))
 
