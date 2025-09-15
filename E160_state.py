@@ -11,8 +11,14 @@ class E160_state:
 		self.wi = .0 #angular velocity, global frame
 		self.v = .0 #velocity, robot frame x direction
 		self.w = .0 #angular velocity, robot frame
-		self.phi_l = .0 #wheel speed, left
-		self.phi_r = .0 #wheel speed, right
+		self.phi_l = .0 #wheel speed, left, reported by user
+		self.phi_r = .0 #wheel speed, right, reported by user
+		self.L = 12.0 #dimension of the robot
+		self.r = 3.0 #dimension of the wheel
+		self.phi_max = 16 #max velocity of the wheel
+		self.trans = np.array([[0.5*self.r,0.5*self.r],[0.5*self.r/self.L,-0.5*self.r/self.L]])
+		self.trans_inv = np.linalg.inv(self.trans)
+		self.wrong_speed = False
 
 	def set_pos_state(self,x,y,theta):
 		self.x = x
@@ -35,7 +41,6 @@ class E160_state:
 		self.v = v
 		self.w = w
 		if (mode == 'S'):
-			self._get_global_velocity()
 			self.update_pos_state(deltaT)
 
 
@@ -46,26 +51,61 @@ class E160_state:
 
 
 	# transfer local velocity to global velocity
-	def _get_global_velocity(self):
+	def _get_global_velocity(self,dx,dy):
 		# velocity transform matrix T_v
 		T_v = np.array([[math.cos(self.theta),-math.sin(self.theta),0],[math.sin(self.theta),math.cos(self.theta),0],[0,0,1]])
 
 		#local velocity vector
-		v_v = np.array([[self.v],[0],[self.w]])
+		v_v = np.array([dx,dy,.0])
 
-		veVec=np.dot(T_v,v_v)
-		self.vix = veVec[0][0]
-		self.viy = veVec[1][0]
-		self.wi = self.w
+		dxi,dyi,_=T_v @ v_v
+		return dxi,dyi
+
 
 	def update_pos_state(self, deltaT):
-		self.x = self.x + deltaT * self.vix
-		self.y = self.y + deltaT * self.viy
-		self.theta = self.theta + deltaT * self.wi
+		self._find_wheel_speed() 
+
+		ds = self.v * deltaT
+		dtheta = self.w * deltaT
+		dx = ds * math.cos(dtheta/2.0)
+		dy = ds * math.sin(dtheta/2.0)
+
+		dxi, dyi = self._get_global_velocity(dx,dy)
+
+		self.x = self.x + dxi
+		self.y = self.y + dyi
+		self.theta = self.theta + dtheta
 		if(self.theta>math.pi):
 			self.theta -= math.pi*2
 		elif(self.theta<-math.pi):
 			self.theta += math.pi*2
+
+
+	def _find_wheel_speed(self):
+		vec = np.array([self.v, self.w])
+		phi_r, phi_l = self.trans_inv @ vec
+		# print(phi_r, phi_l)
+		self.wrong_speed = False
+
+		if(phi_r>self.phi_max):
+			phi_r = self.phi_max
+			self.wrong_speed = True
+
+		elif(phi_r<-self.phi_max):
+			phi_r = -self.phi_max
+			self.wrong_speed = True
+
+		if(phi_l>self.phi_max):
+			phi_l = self.phi_max
+			self.wrong_speed = True
+
+		elif(phi_l<-self.phi_max):
+			phi_l = -self.phi_max
+			self.wrong_speed = True
+
+		[self.v,self.w]=self.trans @ np.array([phi_r,phi_l])
+		# print (self.v, self.w)
+
 
 # Destination is stored in a list
 class E160_des_state:
