@@ -22,8 +22,8 @@ class Path:
 		for v in self.poses:
 			print (v.map_i, v.map_j)
 
-	def save_path(self,file_name="Log\path.txt"):
-		f = open(file_name, 'a+')
+	def save_path(self,file_name="Log\path.txt",mode = 'w'):
+		f = open(file_name, mode)
 		for v in self.poses:
 		# edit this line to have data logging of the data you care about
 			data = [str(v.map_i), str(v.map_j), str(v.theta)]
