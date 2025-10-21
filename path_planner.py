@@ -104,7 +104,7 @@ class path_planner:
 		for p in points:
 			self.path.add_pose(Pose(map_i=p[0],map_j=p[1],theta=0)) #theta is wrong
 			
-		self.path.save_path(file_name="Log\path.csv")
+		self.path.save_path(file_name="log/path.csv",mode = 'w') # Set mode to "a+" if you simply want to append
 
 
 # bresenham algorithm for line generation on grid map
