@@ -41,7 +41,13 @@ class E160_environment:
         for i in range (0,self.num_robots):
             
             # TODO: assign different address to each bot
-            r = E160_robot(self, '\x00\x0C', i, deltaT)
+
+            # if the robots are "differential driven"
+            r = E160_robot(self, '\x00\x0C', i, deltaT, vehicle = "d")
+
+            # if the robots are "4-wheel driven"
+            # r = E160_robot(self, '\x00\x0C', i, deltaT, vehicle = "v")
+            
             self.robots.append(r)
 
         self.robots[0].set_controller(controller(self.robots[0]))# set P_controller for controller 0
