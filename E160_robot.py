@@ -7,7 +7,10 @@ class E160_robot:
 
     def __init__(self, environment, address, robot_id, deltaT = 0.1):
         self.environment = environment
-        self.state = E160_state()
+        self.vehicle = "d" # if differentail bot
+        # self.vehicle = "v" # if 4-wheel vehicle
+
+        self.state = E160_state(vehicle = self.vehicle)
         self.state.set_pos_state(0,0,0)
         self.state_des = E160_des_state()
         # self.state_des.set_des_state(0,0,0)
