@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 class E160_state:
-	def __init__(self):
+	def __init__(self, vehicle = "d"):
 		self.x = .0
 		self.y = .0
 		self.theta = .0
@@ -11,13 +11,25 @@ class E160_state:
 		self.wi = .0 #angular velocity, global frame
 		self.v = .0 #velocity, robot frame x direction
 		self.w = .0 #angular velocity, robot frame
+		self.vehicle = vehicle
 		self.phi_l = .0 #wheel speed, left, reported by user
 		self.phi_r = .0 #wheel speed, right, reported by user
-		self.L = 12.0 #dimension of the robot
-		self.r = 3.0 #dimension of the wheel
-		self.phi_max = 16 #max velocity of the wheel
-		self.trans = np.array([[0.5*self.r,0.5*self.r],[0.5*self.r/self.L,-0.5*self.r/self.L]])
-		self.trans_inv = np.linalg.inv(self.trans)
+
+		if self.vehicle == "d":
+			self.L = 12.0 #dimension of the robot
+			self.r = 3.0 #dimension of the wheel
+			self.phi_max = 16 #max velocity of the wheel
+			self.trans = np.array([[0.5*self.r,0.5*self.r],[0.5*self.r/self.L,-0.5*self.r/self.L]])
+			self.trans_inv = np.linalg.inv(self.trans)
+		elif self.vehicle == "v":
+			self.phi_max = 20.0 #max velocity of the wheels
+			self.Rt_max = 32.0 #max radius of curvature
+			self.d = 20.0 #dimension of the robot
+			self.beta_max = math.asin(self.d/self.Rt_max) # max steering angle
+			self.L = 8.0
+			self.r = 3.0
+
+
 		self.wrong_speed = False
 
 	def set_pos_state(self,x,y,theta):
@@ -41,7 +53,7 @@ class E160_state:
 		self.v = v
 		self.w = w
 		if (mode == 'S'):
-			self.update_pos_state(deltaT)
+			self.update_pos_state(deltaT, vehicle = self.vehicle)
 
 
 	# set the velocity in 
@@ -62,8 +74,8 @@ class E160_state:
 		return dxi,dyi
 
 
-	def update_pos_state(self, deltaT):
-		self._find_wheel_speed() 
+	def update_pos_state(self, deltaT, vehicle ="d"):
+		self._find_wheel_speed(vehicle = vehicle) 
 
 		ds = self.v * deltaT
 		dtheta = self.w * deltaT
@@ -81,29 +93,61 @@ class E160_state:
 			self.theta += math.pi*2
 
 
-	def _find_wheel_speed(self):
-		vec = np.array([self.v, self.w])
-		phi_r, phi_l = self.trans_inv @ vec
-		# print(phi_r, phi_l)
+	def _find_wheel_speed(self, vehicle = "d"):
 		self.wrong_speed = False
 
-		if(phi_r>self.phi_max):
-			phi_r = self.phi_max
-			self.wrong_speed = True
+		if vehicle == "d":
+			vec = np.array([self.v, self.w])
+			phi_r, phi_l = self.trans_inv @ vec
+			# print(phi_r, phi_l)
+			self.wrong_speed = False
 
-		elif(phi_r<-self.phi_max):
-			phi_r = -self.phi_max
-			self.wrong_speed = True
+			if(phi_r>self.phi_max):
+				phi_r = self.phi_max
+				self.wrong_speed = True
 
-		if(phi_l>self.phi_max):
-			phi_l = self.phi_max
-			self.wrong_speed = True
+			elif(phi_r<-self.phi_max):
+				phi_r = -self.phi_max
+				self.wrong_speed = True
 
-		elif(phi_l<-self.phi_max):
-			phi_l = -self.phi_max
-			self.wrong_speed = True
+			if(phi_l>self.phi_max):
+				phi_l = self.phi_max
+				self.wrong_speed = True
 
-		[self.v,self.w]=self.trans @ np.array([phi_r,phi_l])
+			elif(phi_l<-self.phi_max):
+				phi_l = -self.phi_max
+				self.wrong_speed = True
+
+			[self.v,self.w]=self.trans @ np.array([phi_r,phi_l])
+
+		if vehicle == "v":
+			if(self.v >self.phi_max*self.r):
+				self.v = self.phi_max*self.r
+				self.wrong_speed = True
+				print ("too fast linear speed")
+			elif(self.v < -self.phi_max*self.r):
+				self.v = -self.phi_max*self.r
+				self.wrong_speed = True
+				print ("too fast linear speed")
+
+			if(self.v == 0):
+				if(self.w == 0):
+					beta = .0
+				else:
+					beta = 1000000 # just impossible
+			else:
+				beta = math.atan(self.w*self.d/self.v)
+			
+			if (beta>self.beta_max):
+				self.w = self.v*math.tan(self.beta_max)/self.d
+				self.wrong_speed = True
+				print ("too fast turn")
+			elif (beta < -self.beta_max):
+				self.w = self.v*math.tan(-self.beta_max)/self.d
+				self.wrong_speed = True
+				print ("too fast turn")
+
+
 		# print (self.v, self.w)
 
 
